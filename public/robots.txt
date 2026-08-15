@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /result
+Disallow: /thank-you
+
+Sitemap: https://human-design-report.vercel.app/sitemap.xml
