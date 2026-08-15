@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createPayment } from "@/lib/yukassa";
+import { resolveReturnOrigin } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,10 +41,9 @@ export async function POST(request: Request) {
   const plan = PLANS[body.plan];
   const orderId = crypto.randomUUID();
 
-  const origin =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    request.headers.get("origin") ||
-    new URL(request.url).origin;
+  const origin = resolveReturnOrigin(
+    request.headers.get("origin") || new URL(request.url).origin,
+  );
 
   try {
     const payment = await createPayment(

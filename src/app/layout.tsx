@@ -8,6 +8,7 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 /* Основные гарнитуры бренда (латиница) */
 const dmSerif = DM_Serif_Display({
@@ -53,8 +54,6 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
   variable: "--font-jetbrains",
 });
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://human-design-report.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

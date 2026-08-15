@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /result
 Disallow: /thank-you
 
-Sitemap: https://human-design-report.vercel.app/sitemap.xml
+Sitemap: https://www.hd-report.ru/sitemap.xml
