@@ -31,6 +31,49 @@ function getCredentials(): { shopId: string; secretKey: string } {
   return { shopId, secretKey };
 }
 
+export interface FetchedPayment {
+  id: string;
+  status: string;
+  paid: boolean;
+  metadata: Record<string, string>;
+}
+
+/**
+ * Читает платёж по идентификатору.
+ *
+ * Нужен, чтобы подтвердить: запрос на скачивание относится к реально
+ * оплаченному заказу, и чтобы взять данные рождения из самого платежа,
+ * а не из тела запроса браузера.
+ */
+export async function getPayment(paymentId: string): Promise<FetchedPayment | null> {
+  const { shopId, secretKey } = getCredentials();
+  const auth = Buffer.from(`${shopId}:${secretKey}`).toString("base64");
+
+  const res = await fetch(`${API_URL}/${encodeURIComponent(paymentId)}`, {
+    method: "GET",
+    headers: { Authorization: `Basic ${auth}` },
+    cache: "no-store",
+  });
+
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as {
+    id?: string;
+    status?: string;
+    paid?: boolean;
+    metadata?: Record<string, string>;
+  };
+
+  if (!data.id || !data.status) return null;
+
+  return {
+    id: data.id,
+    status: data.status,
+    paid: Boolean(data.paid),
+    metadata: data.metadata ?? {},
+  };
+}
+
 export async function createPayment(
   amount: number,
   orderId: string,

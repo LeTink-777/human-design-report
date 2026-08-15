@@ -19,6 +19,8 @@ interface CheckoutBody {
     name?: string;
     email?: string;
     birthDate?: string;
+    birthTime?: string;
+    birthPlace?: string;
   };
 }
 
@@ -56,6 +58,10 @@ export async function POST(request: Request) {
         name: body.userData?.name?.slice(0, 100) ?? "",
         email: body.userData?.email?.slice(0, 120) ?? "",
         birth_date: body.userData?.birthDate ?? "",
+        // Профиль в calculateHD() зависит от часа рождения, поэтому время
+        // обязано доехать до вебхука вместе с датой.
+        birth_time: body.userData?.birthTime ?? "",
+        birth_place: body.userData?.birthPlace?.slice(0, 100) ?? "",
       },
     );
 

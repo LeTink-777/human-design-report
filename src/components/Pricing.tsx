@@ -12,7 +12,13 @@ import {
   Clock,
   Loader2,
 } from "lucide-react";
-import { formatTimer, getSpots, getTimerRemaining, type HDData } from "@/lib/storage";
+import {
+  formatTimer,
+  getSpots,
+  getTimerRemaining,
+  savePendingOrder,
+  type HDData,
+} from "@/lib/storage";
 
 export type PlanId = "basic" | "full" | "premium";
 
@@ -117,13 +123,21 @@ export default function Pricing({ userData }: PricingProps) {
             name: userData?.name ?? "",
             email: userData?.email ?? "",
             birthDate: userData?.birthDate ?? "",
+            birthTime: userData?.birthTime ?? "",
+            birthPlace: userData?.birthPlace ?? "",
           },
         }),
       });
-      const data = (await res.json()) as { confirmationUrl?: string; error?: string };
+      const data = (await res.json()) as {
+        confirmationUrl?: string;
+        paymentId?: string;
+        error?: string;
+      };
       if (!res.ok || !data.confirmationUrl) {
         throw new Error(data.error || "Не удалось создать платёж");
       }
+      // Нужен /thank-you, чтобы подтвердить оплату при скачивании PDF.
+      savePendingOrder({ plan, paymentId: data.paymentId ?? null });
       window.location.assign(data.confirmationUrl);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Не удалось создать платёж");
